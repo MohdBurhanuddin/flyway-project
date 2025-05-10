@@ -34,6 +34,13 @@
 #     - name: Run Flyway Migrate
 #       run: |
 #         C:\flyway\flyway -configFiles=flyway.conf migrate
+
+
+
+
+
+
+
 name: Flyway Migrate
 
 on:
@@ -53,7 +60,7 @@ jobs:
         env:
           POSTGRES_DB: flyway_test_db
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
+          POSTGRES_PASSWORD: Mohammad
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -76,3 +83,5 @@ jobs:
 
     - name: Run Flyway migration
       run: flyway -configFiles=flyway.conf migrate
+
+
