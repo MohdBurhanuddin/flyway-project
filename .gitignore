@@ -1,0 +1,9 @@
+# Ignore Flyway configurations
+flyway.conf
+*.log
+
+# Ignore node_modules (if using Node.js)
+node_modules/
+
+# Ignore IDE specific files
+.vscode/
