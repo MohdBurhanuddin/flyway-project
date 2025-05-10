@@ -6,8 +6,8 @@ on:
       - master  # Trigger migration on push to the master branch
 
 jobs:
-  flyway-migrate:
-    runs-on: ubuntu-latest
+  migrate:
+    runs-on: ubuntu-latest  # Use Ubuntu as the runner
 
     services:
       postgres:
@@ -19,37 +19,29 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: Mohammad
         options: >-
-          --health-cmd="pg_isready -U postgres"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
+          --health-cmd pg_isready -U postgres
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      - name: Set up Java (required by Flyway)
-        uses: actions/setup-java@v2
-        with:
-          java-version: '11'
+    - name: Set up JDK
+      uses: actions/setup-java@v2
+      with:
+        java-version: '11'
+        distribution: 'temurin'  # Required input to avoid error
 
-      - name: Install Flyway CLI
-        run: |
-          curl -L https://flywaydb.org/download/community/latest | tar -xz -C /tmp
-          sudo mv /tmp/flyway*/flyway /usr/local/bin
+    - name: Install Flyway
+      run: |
+        curl -L https://flywaydb.org/download/community/latest | tar -xz -C /tmp
+        sudo mv /tmp/flyway*/flyway /usr/local/bin
 
-      - name: Wait for PostgreSQL to be ready
-        run: |
-          for i in {1..10}; do
-            pg_isready -h localhost -p 5432 -U postgres && break
-            echo "Waiting for PostgreSQL..."
-            sleep 5
-          done
-
-      - name: Run Flyway migrations
-        run: |
-          flyway -url=jdbc:postgresql://localhost:5432/flyway_test_db \
-                 -user=postgres \
-                 -password=Mohammad \
-                 -locations=filesystem:sql \
-                 migrate
+    - name: Run Flyway migration
+      run: |
+        flyway -url=jdbc:postgresql://localhost:5432/flyway_test_db \
+               -user=postgres \
+               -password=Mohammad \
+               migrate
