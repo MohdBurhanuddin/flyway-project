@@ -1,0 +1,1 @@
+ALTER TABLE accounts ADD COLUMN qwqw VARCHAR(15);

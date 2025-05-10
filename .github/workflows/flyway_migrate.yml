@@ -3,11 +3,11 @@ name: Flyway Migrate
 on:
   push:
     branches:
-      - main  # Trigger migration on push to the main branch
+      - master  # Trigger migration on push to the master branch
 
 jobs:
-  migrate:
-    runs-on: ubuntu-latest  # Use Ubuntu as the runner
+  flyway-migrate:
+    runs-on: ubuntu-latest
 
     services:
       postgres:
@@ -25,10 +25,10 @@ jobs:
           --health-retries=5
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up JDK for Flyway
+      - name: Set up Java (required by Flyway)
         uses: actions/setup-java@v2
         with:
           java-version: '11'
@@ -46,6 +46,10 @@ jobs:
             sleep 5
           done
 
-      - name: Run Flyway migration
+      - name: Run Flyway migrations
         run: |
-          flyway -configFiles=flyway.conf migrate
+          flyway -url=jdbc:postgresql://localhost:5432/flyway_test_db \
+                 -user=postgres \
+                 -password=Mohammad \
+                 -locations=filesystem:sql \
+                 migrate
