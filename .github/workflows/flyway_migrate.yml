@@ -1,3 +1,57 @@
+# name: Flyway Migrate
+
+# on:
+#   push:
+#     branches:
+#       - main
+
+# jobs:
+#   migrate:
+#     runs-on: windows-latest  # Use Windows as the runner
+
+#     services:
+#       postgres:
+#         image: postgres:15
+#         ports:
+#           - 5432:5432
+#         env:
+#           POSTGRES_DB: flyway_test_db
+#           POSTGRES_USER: postgres
+#           POSTGRES_PASSWORD: Mohammad
+#         options: >-
+#           --health-cmd pg_isready
+#           --health-interval 10s
+#           --health-timeout 5s
+#           --health-retries 5
+
+#     steps:
+#     - name: Checkout code
+#       uses: actions/checkout@v2
+
+#     # Install Java (Flyway requires Java to run)
+#     - name: Set up JDK
+#       uses: actions/setup-java@v2
+#       with:
+#         java-version: '11'
+
+#     # Install Flyway on Windows
+#     - name: Install Flyway
+#       run: |
+#         Invoke-WebRequest -Uri "https://flywaydb.org/download/community/latest" -OutFile "flyway.zip"
+#         Expand-Archive -Path "flyway.zip" -DestinationPath "flyway"
+#         Move-Item -Path "flyway" -Destination "C:\flyway"
+
+#     # Wait for PostgreSQL to be ready
+#     - name: Wait for PostgreSQL to be ready
+#       run: |
+#         docker exec -t postgres pg_isready -U postgres
+#       continue-on-error: true
+
+#     # Run Flyway migration with the correct paths
+#     - name: Run Flyway migration
+#       run: |
+#         C:\flyway\flyway -configFiles=C:/Users/Mohammad Burhanuddin/Desktop/devops/flyway/flyway.conf migrate
+
 name: Flyway Migrate
 
 on:
@@ -40,6 +94,18 @@ jobs:
         Invoke-WebRequest -Uri "https://flywaydb.org/download/community/latest" -OutFile "flyway.zip"
         Expand-Archive -Path "flyway.zip" -DestinationPath "flyway"
         Move-Item -Path "flyway" -Destination "C:\flyway"
+
+    # Print current directory for debugging
+    - name: Print current directory
+      run: |
+        pwd
+        ls -R
+
+    # Wait for PostgreSQL to be ready
+    - name: Wait for PostgreSQL to be ready
+      run: |
+        docker exec -t postgres pg_isready -U postgres
+      continue-on-error: true
 
     # Run Flyway migration with the correct paths
     - name: Run Flyway migration
