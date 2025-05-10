@@ -1,0 +1,31 @@
+# version: '3.8'
+
+# services:
+#   postgres-flyway:
+#     image: postgres:15
+#     ports:
+#       - "5432:5432"
+#     environment:
+#       POSTGRES_DB: flyway_test_db
+#       POSTGRES_USER: postgres
+#       POSTGRES_PASSWORD: Mohammad
+
+
+
+version: '3.8'
+
+services:
+  postgres-flyway:
+    image: postgres:15
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: flyway_test_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Mohammad
+    networks:
+      - flyway-network
+
+networks:
+  flyway-network:
+    driver: bridge
