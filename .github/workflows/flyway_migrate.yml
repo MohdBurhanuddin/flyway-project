@@ -3,11 +3,11 @@ name: Flyway Migrate
 on:
   push:
     branches:
-      - master  # Trigger migration on push to the master branch
+      - master
 
 jobs:
   migrate:
-    runs-on: ubuntu-latest  # Use Ubuntu as the runner
+    runs-on: ubuntu-latest
 
     services:
       postgres:
@@ -19,29 +19,36 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: Mohammad
         options: >-
-          --health-cmd pg_isready -U postgres
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Set up JDK
-      uses: actions/setup-java@v2
-      with:
-        java-version: '11'
-        distribution: 'temurin'  # Required input to avoid error
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'temurin'
 
-    - name: Install Flyway
-      run: |
-        curl -L https://flywaydb.org/download/community/latest | tar -xz -C /tmp
-        sudo mv /tmp/flyway*/flyway /usr/local/bin
+      - name: Install Flyway
+        run: |
+          curl -L https://flywaydb.org/download/community/latest | tar -xz -C /tmp
+          sudo mv /tmp/flyway*/flyway /usr/local/bin
 
-    - name: Run Flyway migration
-      run: |
-        flyway -url=jdbc:postgresql://localhost:5432/flyway_test_db \
-               -user=postgres \
-               -password=Mohammad \
-               migrate
+      - name: Wait for PostgreSQL
+        run: |
+          until pg_isready -h localhost -p 5432 -U postgres; do
+            echo "Waiting for postgres..."
+            sleep 2
+          done
+
+      - name: Run Flyway migration
+        run: |
+          flyway -url=jdbc:postgresql://localhost:5432/flyway_test_db \
+                 -user=postgres \
+                 -password=Mohammad \
+                 migrate
