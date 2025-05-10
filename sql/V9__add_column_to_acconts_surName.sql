@@ -1,0 +1,1 @@
+ALTER TABLE accounts ADD COLUMN surName VARCHAR(15);
