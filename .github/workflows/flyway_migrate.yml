@@ -52,4 +52,5 @@ jobs:
 
       - name: Run Flyway migration using config file
         run: |
-          flyway -configFiles=flyway/flyway.conf migrate
+          flyway -configFiles=flyway.conf migrate
+        working-directory: ./flyway
