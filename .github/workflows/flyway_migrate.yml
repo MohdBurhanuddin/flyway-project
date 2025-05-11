@@ -1,3 +1,4 @@
+
 # name: Flyway Migrate
 
 # on:
@@ -39,11 +40,10 @@
 #           docker run --rm \
 #             -v $(pwd)/flyway/sql:/flyway/sql \
 #             flyway/flyway:latest \
-#             -url=jdbc:postgresql://postgres:5432/flyway_test_db \
+#             -url=jdbc:postgresql://localhost:5432/flyway_test_db \
 #             -user=postgres \
 #             -password=Mohammad \
 #             migrate
-
 
 name: Flyway Migrate
 
@@ -91,5 +91,5 @@ jobs:
           flyway -url=jdbc:postgresql://localhost:5432/flyway_test_db \
                  -user=postgres \
                  -password=Mohammad \
-                 -locations=filesystem:./flyway/sql \
+                 -locations=filesystem:./sql \
                  migrate
