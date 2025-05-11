@@ -1,3 +1,4 @@
+
 # version: '3.8'
 
 # services:
@@ -11,7 +12,6 @@
 #       POSTGRES_PASSWORD: Mohammad
 
 
-
 version: '3.8'
 
 services:
@@ -23,9 +23,11 @@ services:
       POSTGRES_DB: flyway_test_db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: Mohammad
-    networks:
-      - flyway-network
 
-networks:
-  flyway-network:
-    driver: bridge
+  flyway:
+    image: flyway/flyway:9.22.3
+    command: -url=jdbc:postgresql://postgres-flyway-1:5432/flyway_test_db -user=postgres -password=Mohammad -locations=filesystem:/sql migrate
+    volumes:
+      - ./sql:/sql  # Mount your SQL migration files
+    depends_on:
+      - postgres-flyway

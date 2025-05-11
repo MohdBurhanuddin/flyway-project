@@ -52,9 +52,6 @@ jobs:
 
       - name: Run Flyway migration
         run: |
-          flyway \
-            -url=jdbc:postgresql://localhost:5432/flyway_test_db \
-            -user=postgres \
-            -password=Mohammad \
-            -locations=filesystem:sql \
-            -X migrate
+          flyway migrate
+        env:
+          FLYWAY_CONFIG_FILE: ./flyway/flyway.conf  # Corrected path to your flyway.conf file
