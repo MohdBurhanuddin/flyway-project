@@ -1,9 +1,9 @@
-name: Flyway Migration
+name: Flyway Migrate
 
 on:
   push:
     branches:
-      - master  # Trigger on push to master branch
+      - master  # Trigger migration on push to master branch
 
 jobs:
   migrate:
@@ -19,13 +19,13 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: Mohammad
         options: >-
-          --health-cmd="pg_isready -U postgres"
+          --health-cmd "PGUSER=postgres pg_isready"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Set up Java
@@ -36,12 +36,22 @@ jobs:
 
       - name: Install Flyway
         run: |
-          curl -L https://repo1.maven.org/maven2/org/flywaydb/flyway-commandline/9.22.3/flyway-commandline-9.22.3-linux-x64.tar.gz | tar xz
-          sudo ln -s "$(pwd)/flyway-9.22.3/flyway" /usr/local/bin/flyway
+          curl -L https://flywaydb.org/download/community/latest | tar -xz -C /tmp
+          sudo mv /tmp/flyway-*/flyway /usr/local/bin
 
-      - name: Show directory structure (debug)
-        run: ls -R
+      - name: Wait for PostgreSQL to be ready
+        run: |
+          for i in {1..10}; do
+            if pg_isready -h localhost -p 5432 -U postgres; then
+              echo "PostgreSQL is ready!"
+              break
+            fi
+            echo "Waiting for PostgreSQL..."
+            sleep 5
+          done
 
       - name: Run Flyway migration
         run: |
-          flyway -configFiles=flyway/flyway.conf -X migrate
+          flyway migrate
+        env:
+          FLYWAY_CONFIG_FILE: ./flyway/flyway.conf  # Corrected path to your flyway.conf file
