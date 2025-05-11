@@ -43,17 +43,21 @@ jobs:
           mkdir -p /tmp/flyway
           tar -xzf flyway.tar.gz -C /tmp/flyway
 
-          # Dynamically locate the extracted Flyway directory
-          FLYWAY_DIR=$(find /tmp/flyway -type d -name "flyway*" | head -n 1)
+          # Debug: List contents of the extracted directory
+          echo "Contents of /tmp/flyway:"
+          ls -R /tmp/flyway
+
+          # Dynamically locate the Flyway binary
+          FLYWAY_BINARY=$(find /tmp/flyway -type f -name "flyway" | head -n 1)
 
           # Ensure the Flyway binary exists
-          if [ ! -f "$FLYWAY_DIR/flyway" ]; then
-            echo "Flyway binary not found in extracted directory: $FLYWAY_DIR"
+          if [ -z "$FLYWAY_BINARY" ]; then
+            echo "Flyway binary not found in extracted directory."
             exit 1
           fi
 
           # Move Flyway binary to /usr/local/bin
-          sudo mv "$FLYWAY_DIR/flyway" /usr/local/bin
+          sudo mv "$FLYWAY_BINARY" /usr/local/bin
 
           # Verify Flyway installation
           flyway -v
