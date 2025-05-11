@@ -9,12 +9,20 @@ services:
       POSTGRES_DB: flyway_test_db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: Mohammad
+    healthcheck:
+      test: ["CMD-SHELL", "PGUSER=postgres pg_isready -d flyway_test_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   flyway:
     image: flyway/flyway:9.22.3
     command: -configFiles=/flyway/flyway.conf migrate
     volumes:
-      - ./flyway/sql:/sql                 # Mount SQL scripts
-      - ./flyway/flyway.conf:/flyway/flyway.conf  # Correct path to conf
+      - ./flyway/sql:/flyway/sql                 # Mount SQL scripts
+      - ./flyway/flyway.conf:/flyway/flyway.conf # Correct path to conf
+    environment:
+      FLYWAY_PLACEHOLDERS_POSTGRES_PASSWORD: Mohammad
     depends_on:
-      - postgres-flyway
+      postgres-flyway:
+        condition: service_healthy
