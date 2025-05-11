@@ -45,6 +45,13 @@ jobs:
 
           # Dynamically find the extracted Flyway directory
           FLYWAY_DIR=$(find /tmp/flyway -type d -name "flyway*" | head -n 1)
+          echo "Flyway directory: $FLYWAY_DIR"
+
+          # Check if the binary exists
+          if [ ! -f "$FLYWAY_DIR/flyway" ]; then
+            echo "Flyway binary not found at $FLYWAY_DIR/flyway"
+            exit 1
+          fi
 
           # Move Flyway binary to /usr/local/bin
           sudo mv "$FLYWAY_DIR/flyway" /usr/local/bin
