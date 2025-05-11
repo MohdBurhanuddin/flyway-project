@@ -16,5 +16,5 @@ services:
     depends_on:
       - postgres
     volumes:
-      - ./flyway/sql:/flyway/sql  # Mount the SQL migration files
-    command: -url=jdbc:postgresql://postgres-flyway:5432/flyway_test_db -user=postgres -password=Mohammad migrate
+      - ./flyway/sql:/flyway/sql
+    command: -url=jdbc:postgresql://postgres:5432/flyway_test_db -user=postgres -password=Mohammad migrate
