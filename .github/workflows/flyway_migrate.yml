@@ -1,3 +1,50 @@
+# name: Flyway Migrate
+
+# on:
+#   push:
+#     branches:
+#       - master
+
+# jobs:
+#   migrate:
+#     runs-on: ubuntu-latest
+
+#     services:
+#       postgres:
+#         image: postgres:15
+#         ports:
+#           - 5432:5432
+#         env:
+#           POSTGRES_DB: flyway_test_db
+#           POSTGRES_USER: postgres
+#           POSTGRES_PASSWORD: Mohammad
+
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v3
+
+#       - name: Wait for PostgreSQL to be ready
+#         run: |
+#           for i in {1..10}; do
+#             if pg_isready -h localhost -p 5432 -U postgres; then
+#               echo "PostgreSQL is ready!"
+#               break
+#             fi
+#             echo "Waiting for PostgreSQL to be ready..."
+#             sleep 5
+#           done
+
+#       - name: Run Flyway migration
+#         run: |
+#           docker run --rm \
+#             -v $(pwd)/flyway/sql:/flyway/sql \
+#             flyway/flyway:latest \
+#             -url=jdbc:postgresql://postgres:5432/flyway_test_db \
+#             -user=postgres \
+#             -password=Mohammad \
+#             migrate
+
+
 name: Flyway Migrate
 
 on:
@@ -34,12 +81,15 @@ jobs:
             sleep 5
           done
 
+      - name: Install Flyway
+        run: |
+          curl -L https://repo1.maven.org/maven2/org/flywaydb/flyway-commandline/11.8.1/flyway-commandline-11.8.1-linux-x64.tar.gz | tar xz
+          sudo ln -s $(pwd)/flyway-*/flyway /usr/local/bin/flyway
+
       - name: Run Flyway migration
         run: |
-          docker run --rm \
-            -v $(pwd)/flyway/sql:/flyway/sql \
-            flyway/flyway:latest \
-            -url=jdbc:postgresql://postgres:5432/flyway_test_db \
-            -user=postgres \
-            -password=Mohammad \
-            migrate
+          flyway -url=jdbc:postgresql://localhost:5432/flyway_test_db \
+                 -user=postgres \
+                 -password=Mohammad \
+                 -locations=filesystem:./flyway/sql \
+                 migrate
