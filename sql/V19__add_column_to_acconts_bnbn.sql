@@ -1,0 +1,1 @@
+ALTER TABLE accounts ADD COLUMN bnbn VARCHAR(15);
