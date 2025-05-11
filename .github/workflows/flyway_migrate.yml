@@ -19,7 +19,7 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: Mohammad
         options: >-
-          --health-cmd "pg_isready -h localhost -d $POSTGRES_DB" 
+          --health-cmd "pg_isready -h localhost -d $POSTGRES_DB"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -39,8 +39,9 @@ jobs:
           curl -L https://repo1.maven.org/maven2/org/flywaydb/flyway-commandline/9.22.1/flyway-commandline-9.22.1-linux-x64.tar.gz -o flyway.tar.gz
           mkdir -p /tmp/flyway
           tar -xzf flyway.tar.gz -C /tmp/flyway
-          sudo mv /tmp/flyway/flyway-9.22.1/flyway /usr/local/bin
-          flyway -v # Verify installation
+          sudo ln -s /tmp/flyway/flyway-9.22.1/flyway /usr/local/bin/flyway
+          export PATH="/tmp/flyway/flyway-9.22.1:$PATH"
+          flyway -v  # Verify installation
 
       - name: Verify Flyway configuration
         run: |
