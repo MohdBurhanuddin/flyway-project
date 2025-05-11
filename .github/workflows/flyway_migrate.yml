@@ -56,8 +56,9 @@ jobs:
             exit 1
           fi
 
-          # Move Flyway binary to /usr/local/bin
+          # Move Flyway binary and other dependencies to /usr/local/bin
           sudo mv "$FLYWAY_BINARY" /usr/local/bin
+          sudo cp -r /tmp/flyway/* /usr/local/bin/
 
           # Verify Flyway installation
           flyway -v
@@ -84,4 +85,7 @@ jobs:
       - name: Run Flyway migration
         run: flyway -X migrate
         env:
+          FLYWAY_URL: jdbc:postgresql://localhost:5432/flyway_test_db
+          FLYWAY_USER: postgres
+          FLYWAY_PASSWORD: Mohammad
           FLYWAY_CONFIG_FILE: ./flyway.conf

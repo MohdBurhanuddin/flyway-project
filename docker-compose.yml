@@ -1,28 +1,49 @@
+# version: '3.8'
+
+# services:
+#   postgres-flyway:
+#     image: postgres:15
+#     ports:
+#       - "5432:5432"
+#     environment:
+#       POSTGRES_DB: flyway_test_db
+#       POSTGRES_USER: postgres
+#       POSTGRES_PASSWORD: Mohammad
+#     healthcheck:
+#       test: ["CMD-SHELL", "PGUSER=postgres pg_isready -d flyway_test_db"]
+#       interval: 10s
+#       timeout: 5s
+#       retries: 5
+
+#   flyway:
+#     image: flyway/flyway:9.22.3
+#     command: -configFiles=/flyway/flyway.conf migrate
+#     volumes:
+#       - ./flyway/sql:/flyway/sql                 # Mount SQL scripts
+#       - ./flyway/flyway.conf:/flyway/flyway.conf # Correct path to conf
+#     environment:
+#       FLYWAY_PLACEHOLDERS_POSTGRES_PASSWORD: Mohammad
+#     depends_on:
+#       postgres-flyway:
+#         condition: service_healthy0
+
 version: '3.8'
 
 services:
-  postgres-flyway:
+  postgres:
     image: postgres:15
-    ports:
-      - "5432:5432"
+    container_name: postgres-flyway
     environment:
       POSTGRES_DB: flyway_test_db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: Mohammad
-    healthcheck:
-      test: ["CMD-SHELL", "PGUSER=postgres pg_isready -d flyway_test_db"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+    ports:
+      - "5432:5432"
 
   flyway:
-    image: flyway/flyway:9.22.3
-    command: -configFiles=/flyway/flyway.conf migrate
-    volumes:
-      - ./flyway/sql:/flyway/sql                 # Mount SQL scripts
-      - ./flyway/flyway.conf:/flyway/flyway.conf # Correct path to conf
-    environment:
-      FLYWAY_PLACEHOLDERS_POSTGRES_PASSWORD: Mohammad
+    image: flyway/flyway:latest
     depends_on:
-      postgres-flyway:
-        condition: service_healthy
+      - postgres
+    volumes:
+      - ./flyway:/flyway  # Mount your Flyway configuration and migrations
+    command: -url=jdbc:postgresql://postgres-flyway:5432/flyway_test_db -user=postgres -password=Mohammad migrate
