@@ -36,11 +36,21 @@ jobs:
 
       - name: Install Flyway
         run: |
+          # Download Flyway
           curl -L https://repo1.maven.org/maven2/org/flywaydb/flyway-commandline/9.22.1/flyway-commandline-9.22.1-linux-x64.tar.gz -o flyway.tar.gz
+
+          # Extract Flyway archive
           mkdir -p /tmp/flyway
           tar -xzf flyway.tar.gz -C /tmp/flyway
-          sudo mv /tmp/flyway/flyway-9.22.1/flyway /usr/local/bin
-          flyway -v # Verify installation
+
+          # Dynamically find the extracted Flyway directory
+          FLYWAY_DIR=$(find /tmp/flyway -type d -name "flyway*" | head -n 1)
+
+          # Move Flyway binary to /usr/local/bin
+          sudo mv "$FLYWAY_DIR/flyway" /usr/local/bin
+
+          # Verify Flyway installation
+          flyway -v
 
       - name: Verify Flyway configuration
         run: |
