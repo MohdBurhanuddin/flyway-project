@@ -18,4 +18,4 @@ services:
       - postgres
     volumes:
       - ./sql:/flyway/sql  # Mount the sql directory correctly
-    command: -url=jdbc:postgresql://postgres-flyway-1:5432/flyway_test_db -user=postgres -password=Mohammad migrate
+    command: -url=jdbc:postgresql://postgres-flyway:5432/flyway_test_db -user=postgres -password=Mohammad migrate
